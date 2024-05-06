@@ -14,6 +14,8 @@ app = Flask(__name__)
 def update_frames():
     while True:
         frame = camera.get_frame()
+        print("Frame captured")
+        print(f"Frame size: {len(frame)} bytes")
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
