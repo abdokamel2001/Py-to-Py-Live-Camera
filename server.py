@@ -18,14 +18,19 @@ def generate_frames():
         success, frame = camera.read()
         if not success:
             break
+        
+        print("Original frame dimensions:", frame.shape)  # Print original frame dimensions
+        
         if width:
             frame = cv2.resize(frame, (width, height))
+            print("Resized frame dimensions:", frame.shape)  # Print resized frame dimensions
 
         _, buffer = cv2.imencode('.jpg', frame)
         frame_bytes = buffer.tobytes()
 
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
+
 
 @app.route('/')
 def index():
