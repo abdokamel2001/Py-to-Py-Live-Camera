@@ -5,11 +5,21 @@ import cv2
 app = Flask(__name__)
 camera = cv2.VideoCapture(0)
 
+width = input("Enter the width of the frame (leave empty for default): ")
+height = None
+if width != "" and width.isdigit():
+    width = int(width)
+    height = int(camera.get(cv2.CAP_PROP_FRAME_HEIGHT) * width / camera.get(cv2.CAP_PROP_FRAME_WIDTH))
+else:
+    width = None
+
 def generate_frames():
     while True:
         success, frame = camera.read()
         if not success:
             break
+        if width:
+            frame = cv2.resize(frame, (width, height))
 
         _, buffer = cv2.imencode('.jpg', frame)
         frame_bytes = buffer.tobytes()
