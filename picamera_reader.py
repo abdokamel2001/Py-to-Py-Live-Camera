@@ -4,7 +4,7 @@ import io
 
 class PiCameraReader:
     def __init__(self, width=None):
-        self.camera = PiCamera2()
+        self.camera = Picamera2()
         if width is None:
             self.camera.resolution = self.camera.max_resolution
         else:
