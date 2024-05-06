@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Live streaming</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"
+            integrity="sha512-hFk3wNNxuZshg88k6MJk4/RF20sKH7PXahPqkDVhF10fqRn5BZcSgVfAkeTal9WAhT0nTquwjHPE62c8hBtRKg=="
+            crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+        socket.on('connect', function () {
+            console.log('Connected to server');
+        });
+        socket.on('message_from_server', function (message) {
+            console.log('Message received from server:', message);
+        });
+    </script>
+</head>
+
+<body>
+    <h1>Live streaming</h1>
+    <div>
+        <img src="{{ url_for('video') }}" width="50%" />
+    </div>
+</body>
+
+</html>
