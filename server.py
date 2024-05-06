@@ -13,7 +13,7 @@ app = Flask(__name__)
 
 def update_frames():
     while True:
-        frame = camera.read()  # Read the next frame from the PiCameraReader
+        frame = camera.get_frame()
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
