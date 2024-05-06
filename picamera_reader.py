@@ -1,4 +1,4 @@
-from picamera2 import PiCamera2
+from picamera2 import Picamera2
 import numpy as np
 import io
 
