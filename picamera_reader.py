@@ -1,12 +1,12 @@
-from picamera2 import PiCamera
+from picamera2 import PiCamera2
 import numpy as np
 import io
 
 class PiCameraReader:
     def __init__(self, width=None):
-        self.camera = PiCamera()
+        self.camera = PiCamera2()
         if width is None:
-            self.camera.resolution = self.camera.MAX_RESOLUTION
+            self.camera.resolution = self.camera.max_resolution
         else:
             self.camera.resolution = self.calculate_resolution(width)
         self.stream = io.BytesIO()
@@ -27,7 +27,7 @@ class PiCameraReader:
         return frame
 
     def calculate_resolution(self, width):
-        max_width, max_height = self.camera.MAX_RESOLUTION
+        max_width, max_height = self.camera.max_resolution
         if max_width < width:
             raise ValueError("Requested width exceeds maximum resolution")
         ratio = width / max_width
