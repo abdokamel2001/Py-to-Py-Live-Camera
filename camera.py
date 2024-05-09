@@ -2,7 +2,7 @@ import cv2
 
 def test_camera():
     # Initialize the camera
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(-1)
 
     # Check if the camera is opened successfully
     if not cap.isOpened():
