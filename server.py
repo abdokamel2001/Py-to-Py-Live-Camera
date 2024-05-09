@@ -1,31 +1,29 @@
 from flask import Flask, render_template, Response
-from picamera2 import PiCamera
-import numpy as np
 import cv2
-import io
 
 app = Flask(__name__)
-camera = PiCamera()
+camera = cv2.VideoCapture('/dev/video0', cv2.CAP_V4L)
+# camera = cv2.VideoCapture(0)
 
 width = input("Enter the width of the frame (leave empty for default): ")
 height = None
 if width != "" and width.isdigit():
     width = int(width)
-    height = int(camera.resolution[1] * int(width) / int(camera.resolution[0]))
+    height = int(camera.get(cv2.CAP_PROP_FRAME_HEIGHT) * width / camera.get(cv2.CAP_PROP_FRAME_WIDTH))
 else:
     width = None
 
-def update_frames():
-    stream = io.BytesIO()
-    for _ in camera.capture_continuous(stream, format='jpeg'):
-        stream.seek(0)
-        frame = cv2.imdecode(np.frombuffer(stream.read(), dtype=np.uint8), 1)
+def generate_frames():
+    while True:
+        success, frame = camera.read()
+        if not success:
+            break
         
-        if frame is None:
-            continue
-            
+        print("Original frame dimensions:", frame.shape)  # Print original frame dimensions
+        
         if width:
             frame = cv2.resize(frame, (width, height))
+            print("Resized frame dimensions:", frame.shape)  # Print resized frame dimensions
 
         _, buffer = cv2.imencode('.jpg', frame)
         frame_bytes = buffer.tobytes()
@@ -33,19 +31,16 @@ def update_frames():
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
 
-        stream.seek(0)
-        stream.truncate()
 
 @app.route('/')
 def index():
+    """Render the main page"""
     return render_template('index.html')
 
 @app.route('/video')
 def video():
     """Stream video frames"""
-    return Response(update_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+    return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 if __name__ == "__main__":
-    host_ip = socket.gethostbyname(socket.gethostname())
-    print(f"Server IP: {host_ip}")
     app.run(host='0.0.0.0', port=5000)
