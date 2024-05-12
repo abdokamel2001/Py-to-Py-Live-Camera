@@ -1,29 +1,21 @@
 from flask import Flask, render_template, Response
+from picamera2 import PiCamera2
 import cv2
 
 app = Flask(__name__)
-camera = cv2.VideoCapture('/dev/video0', cv2.CAP_V4L)
-# camera = cv2.VideoCapture(0)
-
-width = input("Enter the width of the frame (leave empty for default): ")
-height = None
-if width != "" and width.isdigit():
-    width = int(width)
-    height = int(camera.get(cv2.CAP_PROP_FRAME_HEIGHT) * width / camera.get(cv2.CAP_PROP_FRAME_WIDTH))
-else:
-    width = None
+picam2 = Picamera2()
+preview_config = picam2.create_preview_configuration()
+picam2 = picam2.configure(preview_config)
+picam2.start()
+print("Camera started")
 
 def generate_frames():
     while True:
-        success, frame = camera.read()
-        if not success:
+        frame = picam2.capture_image("main")
+        if frame is None:
             break
         
-        print("Original frame dimensions:", frame.shape)  # Print original frame dimensions
-        
-        if width:
-            frame = cv2.resize(frame, (width, height))
-            print("Resized frame dimensions:", frame.shape)  # Print resized frame dimensions
+        print("Original frame dimensions:", frame.shape)
 
         _, buffer = cv2.imencode('.jpg', frame)
         frame_bytes = buffer.tobytes()
