@@ -1,11 +1,12 @@
 from flask import Flask, render_template, Response
-from picamera2 import PiCamera2
+from picamera2 import Picamera2
+import numpy as np
 import cv2
 
 app = Flask(__name__)
 picam2 = Picamera2()
 preview_config = picam2.create_preview_configuration()
-picam2 = picam2.configure(preview_config)
+picam2.configure(preview_config)
 picam2.start()
 print("Camera started")
 
@@ -15,6 +16,7 @@ def generate_frames():
         if frame is None:
             break
         
+        frame = np.array(frame)[:,:,[2,1,0]]
         print("Original frame dimensions:", frame.shape)
 
         _, buffer = cv2.imencode('.jpg', frame)

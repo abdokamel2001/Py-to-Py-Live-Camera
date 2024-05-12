@@ -3,3 +3,5 @@ numpy==1.26.4
 opencv_python==4.9.0.80
 Requests==2.31.0
 picamera2==0.3.18
+rpi-kms==0.1a1
+rpi-libcamera==0.1a4
