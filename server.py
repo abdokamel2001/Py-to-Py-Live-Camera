@@ -1,29 +1,24 @@
 from flask import Flask, render_template, Response
-from picamera2 import Picamera2
+from Utils.camera_utils import Camera, CameraHandler
 import numpy as np
 import cv2
 
 app = Flask(__name__)
-picam2 = Picamera2()
-preview_config = picam2.create_preview_configuration()
-picam2.configure(preview_config)
-picam2.start()
-print("Camera started")
+camera = Camera()
 
 def generate_frames():
-    while True:
-        frame = picam2.capture_image("main")
-        if frame is None:
-            break
-        
-        frame = np.array(frame)[:,:,[2,1,0]]
-        print("Original frame dimensions:", frame.shape)
-
-        _, buffer = cv2.imencode('.jpg', frame)
-        frame_bytes = buffer.tobytes()
-
-        yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
+    with CameraHandler(camera):
+        while True:
+            frame = camera.read_bgr()
+            if frame is None:
+                break
+            
+            print("Original frame dimensions:", frame.shape)
+            _, buffer = cv2.imencode('.jpg', frame)
+            frame_bytes = buffer.tobytes()
+    
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
 
 
 @app.route('/')
