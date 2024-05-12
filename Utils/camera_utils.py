@@ -4,30 +4,28 @@ import numpy as np
 class Camera(Picamera2):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.configure(self.create_preview_configuration())
-        self.start()
     
     def read_rgb(self):
         frame = self.capture_array("main")
-        if frame is None or frame.size == 0:
+        if frame is None:
             return None
-        frame = np.array(frame)[:,:,:3]
-        return frame
+        return frame[:,:,:3]
     
     def read_bgr(self):
         frame = self.capture_array("main")
-        if frame is None or frame.size == 0:
+        if frame is None:
             return None
-        frame = np.array(frame)[:,:,[2,1,0]]
-        return frame
+        return frame[:,:,[2,1,0]]
     
     def read_img(self):
         return self.capture_image("main")
     
-
 class CameraHandler:
-    def __init__(self, camera: Camera):
-        self.camera = camera
+    def __init__(self):
+        self.camera = Camera()
+        config = self.camera.create_preview_configuration()
+        self.camera.configure(config)
+        self.camera.start()
         
     def __enter__(self):
         return self.camera

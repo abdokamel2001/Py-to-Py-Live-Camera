@@ -1,13 +1,11 @@
 from flask import Flask, render_template, Response
-from Utils.camera_utils import Camera, CameraHandler
-import numpy as np
+from Utils.camera_utils import CameraHandler
 import cv2
 
 app = Flask(__name__)
-camera = Camera()
 
 def generate_frames():
-    with CameraHandler(camera):
+    with CameraHandler() as camera:
         while True:
             frame = camera.read_bgr()
             if frame is None:
