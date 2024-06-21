@@ -3,6 +3,8 @@ import numpy as np
 
 class Camera(Picamera2):
     def __init__(self, *args, **kwargs):
+        if len(Picamera2.global_camera_info()) == 0:
+            raise Exception("No camera detected.")
         super().__init__(*args, **kwargs)
     
     def read_rgb(self):
