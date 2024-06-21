@@ -1,6 +1,4 @@
 from picamera2 import Picamera2
-from libcamera import controls
-import numpy as np
 
 class Camera(Picamera2):
     def __init__(self, *args, **kwargs):
@@ -27,7 +25,6 @@ class Camera(Picamera2):
 class CameraHandler:
     def __init__(self):
         self.camera = Camera()
-        self.camera.set_controls({"AfMode":controls.AfModeEnum.Continuous})
         config = self.camera.create_preview_configuration()
         self.camera.configure(config)
         self.camera.start()
