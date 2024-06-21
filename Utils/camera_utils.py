@@ -1,4 +1,5 @@
 from picamera2 import Picamera2
+from libcamera import controls
 import numpy as np
 
 class Camera(Picamera2):
@@ -6,6 +7,7 @@ class Camera(Picamera2):
         if len(Picamera2.global_camera_info()) == 0:
             raise Exception("No camera detected.")
         super().__init__(*args, **kwargs)
+        
     
     def read_rgb(self):
         frame = self.capture_array("main")
@@ -25,6 +27,7 @@ class Camera(Picamera2):
 class CameraHandler:
     def __init__(self):
         self.camera = Camera()
+        self.camera.set_controls({"AfMode":controls.AfModeEnum.Continuous})
         config = self.camera.create_preview_configuration()
         self.camera.configure(config)
         self.camera.start()
