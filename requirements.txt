@@ -17,7 +17,7 @@ pillow==10.3.0
 python-prctl==1.8.1
 requests==2.31.0
 rpi-kms==0.1a1
-rpi-libcamera==0.1a4
+rpi-libcamera==0.1a5
 simplejpeg==1.7.2
 urllib3==2.2.1
 v4l2-python3==0.3.4
